@@ -1,0 +1,53 @@
+@page "/UserCreate"
+@using Microsoft.AspNetCore.Components
+@using BlazorAPI.Shared.Models
+<h1>UserCreate</h1>
+
+
+<EditForm Model="_newuser" OnValidSubmit="CreateUserAsync">
+
+       <div class="mb-3">
+           <label for="topic" class="form-label">Topic</label>
+           <input @bind="_newuser.Name" class="form-control" id="topic"/>
+           </div>
+        <button type="submit" class="btn btn-primary bg-primary">Opret</button>
+
+</EditForm>
+
+@code {
+
+#pragma warning disable CS8618
+    [Inject]
+    protected HttpClient HttpClient { get; set; }
+#pragma warning restore CS8618
+
+    private List<User>? _user;
+
+
+    public User _newuser = new()
+    {
+        UserId = 0,
+        Name = "skriv et navn"
+
+
+    };
+
+    private User? _createdUser = null;
+
+    private async Task CreateUserAsync()
+    {
+        Console.WriteLine("Hello word");
+        HttpResponseMessage response = await HttpClient.PostAsJsonAsync<User?>("https://localhost:7253/user/create", _newuser);
+
+    }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        _user = await HttpClient.GetFromJsonAsync<List<User>?>("https://localhost:7253/user/all/");
+
+
+    }
+
+}

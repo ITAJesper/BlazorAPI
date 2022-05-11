@@ -1,0 +1,107 @@
+@page "/QuestionCreate"
+
+@using BlazorAPI.Shared.Models
+@using Microsoft.AspNetCore.Components
+@using Microsoft.EntityFrameworkCore
+@using System.Runtime.CompilerServices
+@using System.Net.Http
+@using System.Net.Http.Json
+@using System.Net.Mime
+@using System.Threading.Tasks
+
+<h3>Opret dit spørgsmål</h3>
+
+<EditForm Model="_newquestion" OnValidSubmit="CreateQuestionAsync">
+    
+    
+    <div class="form-group">
+        <label for="user" class="col-form-label">
+            user
+        </label>
+        <select id="user" @bind="_newquestion.UserId" class="form-select" aria-label="Default select example">
+            @if (_topic != null)
+            {
+                <option>Vælg bruger navn</option>
+                @foreach (var users in _user)
+                {
+                    <option value="@users.UserId">@users.Name</option>
+                }
+            }
+
+        </select>
+    </div>
+    
+    <br>
+    
+    <div class="form-group">
+        <label for="topic" class="col-form-label">
+            topic
+        </label>
+        <select id="topic" @bind="_newquestion.TopicId" class="form-select" aria-label="Default select example">
+            @if (_topic != null)
+            {
+                <option >Vælg bruger navn</option>
+                @foreach (var topics in _topic)
+                {
+                    <option value="@topics.TopicId">@topics.Title</option>
+                }
+            }
+        </select>
+    </div>
+    
+    <br>
+        
+        <div class="mb-3">
+            <label for="questionId" class="form-label">Question</label>
+            <input @bind="_newquestion.Title" class="form-control" id="questionId"/>
+        </div>
+        <div class="mb-3">
+            <label for="text" class="form-label">Text</label>
+            <textarea  @bind="_newquestion.Text" class="form-control" id="text" rows="3"></textarea></div>
+        <button type="submit" class="btn btn-primary bg-primary">Opret</button>
+
+</EditForm>
+
+@code {
+
+#pragma warning disable CS8618
+    [Inject]
+    protected HttpClient HttpClient { get; set; }
+#pragma warning restore CS8618
+
+    private List<Topic>? _topic;
+
+    private List<User>? _user;
+    
+    public Question _newquestion = new()
+    {
+        
+        Text = "skriv en kommentar",
+        DownVote = 0,
+        UpVote = 0,
+        TimeStamp = DateTime.Today,
+        UserId = 0,
+        TopicId = 0
+
+    };
+
+
+
+    private Question? _createdQuestion = null;
+    
+    private async Task CreateQuestionAsync()
+    {
+        Console.WriteLine("Hello word");
+        HttpResponseMessage response = await HttpClient.PostAsJsonAsync<Question?>("https://localhost:7253/question/create", _newquestion);
+
+    }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        _topic = await HttpClient.GetFromJsonAsync<List<Topic>?>("https://localhost:7253/topic/all/");
+        _user = await HttpClient.GetFromJsonAsync<List<User>?>("https://localhost:7253/user/all/");
+
+    }
+}

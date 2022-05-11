@@ -1,0 +1,62 @@
+﻿@page "/"
+@using BlazorAPI.Shared.Models
+
+<PageTitle>Index</PageTitle>
+
+<h1>Alle spørgsmål</h1>
+
+<div class="d-grid gap-2 d-md-flex justify-content-md-end">
+    <a class="btn btn-primary me-md-2 bg-primary" href="/QuestionCreate">
+        <i class="bi bi-plus-circle"></i> Opret spørgsmål
+    </a>
+ 
+
+</div>
+
+
+<br>
+
+<div>
+    @if (_question != null)
+    {
+        @foreach (var question in _question)
+        {
+            <div class="list-group">
+              <a href=@string.Format("/OverView/question/{0}", question.QuestionId) class="list-group-item list-group-item-action">
+                <div class="d-flex w-100 justify-content-between">
+                    <h5 class="mb-1">@question.Title
+                        <span class="badge rounded-pill bg-success" type="button" >@question.UpVote</span>
+                        <span class="badge rounded-pill bg-danger" type="button" >@question.DownVote</span>
+                        </h5> 
+                    <small>@question.TimeStamp.ToShortDateString()</small>
+                </div>
+                <p class="mb-1">@question.Text</p>
+                <small>@question.User.Name</small>
+              </a>
+            </div>
+        }
+    }
+</div>
+
+
+@code {
+    [Parameter]
+    public  int QuestionId { get; set; }
+    
+#pragma warning disable CS8618
+    [Inject]
+    protected HttpClient HttpClient { get; set; }
+#pragma warning restore CS8618
+    
+    private List<Question>? _question;
+    
+    protected override async Task OnInitializedAsync()
+    {
+        
+        _question = await HttpClient.GetFromJsonAsync<List<Question>?> ("https://localhost:7253/question/all/");
+
+    }
+    
+    
+
+}

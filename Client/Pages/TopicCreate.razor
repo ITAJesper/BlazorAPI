@@ -1,0 +1,53 @@
+@page "/TopicCreate"
+@using Microsoft.AspNetCore.Components
+@using BlazorAPI.Shared.Models
+
+<h1>TopicCreate</h1>
+
+<EditForm Model="_newtopic" OnValidSubmit="CreateTopicAsync">
+
+       <div class="mb-3">
+           <label for="topic" class="form-label">Topic</label>
+           <input @bind="_newtopic.Title" class="form-control" id="topic"/>
+           </div>
+        <button type="submit" class="btn btn-primary bg-primary">Opret</button>
+
+</EditForm>
+
+@code {
+
+#pragma warning disable CS8618
+    [Inject]
+    protected HttpClient HttpClient { get; set; }
+#pragma warning restore CS8618
+
+    private List<Topic>? _topic;
+
+
+    public Topic _newtopic = new()
+    {
+        TopicId = 0,
+        Title = "skriv en title"
+
+
+    };
+    
+    private Topic? _createdTopic = null;
+
+    private async Task CreateTopicAsync()
+    {
+        Console.WriteLine("Hello word");
+        HttpResponseMessage response = await HttpClient.PostAsJsonAsync<Topic?>("https://localhost:7253/topic/create", _newtopic);
+
+    }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        _topic = await HttpClient.GetFromJsonAsync<List<Topic>?>("https://localhost:7253/topic/all/");
+
+
+    }
+
+}

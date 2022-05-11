@@ -1,0 +1,12 @@
+/Users/jesper/Documents/BlazorAPI/Shared/bin/Debug/net6.0/BlazorAPI.Shared.deps.json
+/Users/jesper/Documents/BlazorAPI/Shared/bin/Debug/net6.0/BlazorAPI.Shared.dll
+/Users/jesper/Documents/BlazorAPI/Shared/bin/Debug/net6.0/BlazorAPI.Shared.pdb
+/Users/jesper/Documents/BlazorAPI/Shared/obj/Debug/net6.0/BlazorAPI.Shared.csproj.AssemblyReference.cache
+/Users/jesper/Documents/BlazorAPI/Shared/obj/Debug/net6.0/BlazorAPI.Shared.GeneratedMSBuildEditorConfig.editorconfig
+/Users/jesper/Documents/BlazorAPI/Shared/obj/Debug/net6.0/BlazorAPI.Shared.AssemblyInfoInputs.cache
+/Users/jesper/Documents/BlazorAPI/Shared/obj/Debug/net6.0/BlazorAPI.Shared.AssemblyInfo.cs
+/Users/jesper/Documents/BlazorAPI/Shared/obj/Debug/net6.0/BlazorAPI.Shared.csproj.CoreCompileInputs.cache
+/Users/jesper/Documents/BlazorAPI/Shared/obj/Debug/net6.0/BlazorAPI.Shared.dll
+/Users/jesper/Documents/BlazorAPI/Shared/obj/Debug/net6.0/refint/BlazorAPI.Shared.dll
+/Users/jesper/Documents/BlazorAPI/Shared/obj/Debug/net6.0/BlazorAPI.Shared.pdb
+/Users/jesper/Documents/BlazorAPI/Shared/obj/Debug/net6.0/ref/BlazorAPI.Shared.dll

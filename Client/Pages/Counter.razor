@@ -1,0 +1,51 @@
+﻿@page "/counter"
+@using BlazorAPI.Shared.Models
+
+
+<h1>Topics</h1>
+
+<div class="d-grid gap-2 d-md-flex justify-content-md-end">
+    <a class="btn btn-primary me-md-2 bg-primary" href="/TopicCreate">
+        <i class="bi bi-plus-circle"></i> Opret Topic
+    </a>
+ 
+
+</div>
+
+<br>
+
+<div>
+    @if (_topic != null)
+    {
+        @foreach (var topic in _topic)
+        {
+            <ul class="list-group">
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    @topic.Title
+                    <span class="badge bg-primary rounded-pill">
+                    </span>
+                </li>
+            </ul>
+            <br/>
+        }
+    }
+</div>
+
+@code {
+#pragma warning disable CS8618
+    [Inject]
+    protected HttpClient HttpClient { get; set; }
+#pragma warning restore CS8618
+
+    private List<Topic>? _topic;
+    
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        _topic = await HttpClient.GetFromJsonAsync<List<Topic>?>("https://localhost:7253/topic/all");
+        
+        Console.WriteLine($"Found {_topic.Count} Questions");
+    }
+
+}

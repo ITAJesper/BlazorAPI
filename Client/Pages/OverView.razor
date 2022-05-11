@@ -1,0 +1,194 @@
+@page "/OverView/question/{QuestionId:int}"
+@using BlazorAPI.Shared.Models
+@using System.Net.Http
+@using System.Net.Http.Json
+@using System.Text.Json.Serialization   
+@using System.Threading.Tasks
+@using BlazorAPI.Shared.Models
+@using Microsoft.AspNetCore.Components
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.EntityFrameworkCore.ValueGeneration
+
+
+<div>
+    @if (_question != null)
+    {
+        @foreach (var question in _question)
+        {
+            if (question.QuestionId == QuestionId)
+            {
+                <div class="card text-center">
+                    <div class="card-header bg-primary">
+                        Spørgsmål
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title" >@question.Title</h5>
+                        <p class="card-text">@question.Text</p>
+                    </div>
+                    <div class="card-footer text-muted">
+                        @question.TimeStamp.ToShortDateString()
+                    </div>
+                </div>
+            }
+        }
+    }
+</div>
+
+<div class="card text-center">
+    <buttom @onclick="UpVoteAsync"><i class="bi bi-caret-up-fill"></i>
+        <input href="#" hidden="true" @bind="_newUpVote.QuestionId">
+      <input hidden="true"  @bind="_newUpVote.QuestionId = QuestionId">
+    </buttom>  
+    <buttom href="#" @onclick="downVoteAsync"><i class="bi bi-caret-down-fill"></i>
+        <input hidden="true" @bind="_newDownVote.QuestionId">
+              <input hidden="true" @bind="_newDownVote.QuestionId = QuestionId">
+        </buttom>
+    
+</div>
+
+
+<br/>
+<br>
+
+<div>
+    
+    @if (_comment != null)
+    {
+        
+        @foreach (var comment in _comment)
+        {
+            if (QuestionId == comment.QuestionId)
+            {
+                <div class="card">
+                    <div class="card-header bg-primary">
+                        @comment.User.Name
+                    </div>
+                    <div class="card-body">
+                        <blockquote class="blockquote mb-0">
+                            <p>@comment.Text</p>
+                            <footer class="blockquote-footer">@comment.TimeStamp.ToShortDateString()</footer>
+                        </blockquote>
+                    </div>
+                </div>
+            }
+            
+            
+        }
+    }
+</div>
+
+<br>
+<br>
+
+<EditForm Model="_newcomment" OnValidSubmit="CreateCommentAsync">
+    <div class="form-group">
+        <label for="user" class="col-form-label">
+            user
+        </label>
+        <select id="user" @bind="_newcomment.UserId" class="form-select" aria-label="Default select example">
+            @if (_user != null)
+            {
+                <option>Vælg bruger navn</option>
+                @foreach (var users in _user)
+                {
+                    <option value="@users.UserId">@users.Name</option>
+                }
+            }
+   
+        </select>
+    </div>
+    <div hidden="true">
+        <input @bind="_newcomment.QuestionId = QuestionId "/>
+    </div>
+    <div class="mb-3">
+        <label for="text" class="form-label">Kommentar</label>
+        <textarea @bind="_newcomment.Text" class="form-control" id="text" rows="3"></textarea></div>
+    <button type="submit" class="btn btn-primary bg-primary">Svar</button>
+    </EditForm>
+
+
+
+
+
+@code {
+    [Parameter]
+    public int QuestionId { get; set; } 
+    
+#pragma warning disable CS8618
+    [Inject]
+    protected HttpClient HttpClient { get; set; }
+#pragma warning restore CS8618
+    
+   
+
+    private List<Comment>? _comment;
+
+    private List<Question>? _question;
+
+    private List<User>? _user;
+
+
+    private Comment _newcomment = new()
+    {
+        Text = "skriv en kommentar",
+        DownVote = 0,
+        UpVote = 0,
+        TimeStamp = DateTime.Today,
+        UserId = 0,
+        QuestionId = 0
+        
+
+    };
+    
+    public Question _newUpVote = new()
+    {
+        UpVote = 0,
+        QuestionId = 0
+        
+    };
+    
+    public Question _newDownVote = new()
+    {
+        
+        DownVote = 0,
+        QuestionId = 0
+
+    };
+
+    
+
+    private Comment? _createdComment = null;
+    
+    private async Task CreateCommentAsync()
+    {
+        HttpResponseMessage response = await HttpClient.PostAsJsonAsync<Comment?>("https://localhost:7253/comment/create/", _newcomment);
+        
+    }
+    
+
+    protected override async Task OnInitializedAsync()
+    {
+
+       _comment = await HttpClient.GetFromJsonAsync<List<Comment>?>("https://localhost:7253/comment/all/");
+        _question = await HttpClient.GetFromJsonAsync<List<Question>?> ("https://localhost:7253/question/all/");
+        _user = await HttpClient.GetFromJsonAsync<List<User>?> ("https://localhost:7253/user/all/");
+
+    }
+    
+    private async Task UpVoteAsync()
+    {
+        Console.WriteLine("Hello word");
+        HttpResponseMessage response = await HttpClient.PutAsJsonAsync<Question?>($"https://localhost:7253/question/upvote/{QuestionId}", _newUpVote);
+
+    }
+    
+    private async Task downVoteAsync()
+    {
+        Console.WriteLine("Hello word");
+        HttpResponseMessage response = await HttpClient.PutAsJsonAsync<Question?>($"https://localhost:7253/question/downvote/{QuestionId}", _newDownVote);
+
+    }
+    
+    
+}
+

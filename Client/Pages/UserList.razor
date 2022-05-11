@@ -1,0 +1,51 @@
+@page "/userlist"
+@using BlazorAPI.Shared.Models
+
+<h1>Users</h1>
+
+<div class="d-grid gap-2 d-md-flex justify-content-md-end">
+    <a class="btn btn-primary me-md-2 bg-primary" href="/UserCreate">
+        <i class="bi bi-plus-circle"></i> Opret User
+    </a>
+ 
+
+</div>
+
+<br>
+
+<div>
+    @if (_user != null)
+    {
+        @foreach (var user in _user)
+        {
+            <ul class="list-group">
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    @user.Name
+                    <span class="badge bg-primary rounded-pill">
+                    </span>
+                </li>
+            </ul>
+            <br/>
+        }
+    }
+</div>
+
+@code {
+#pragma warning disable CS8618
+    [Inject]
+    protected HttpClient HttpClient { get; set; }
+#pragma warning restore CS8618
+
+    private List<User>? _user;
+    
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        _user = await HttpClient.GetFromJsonAsync<List<User>?>("https://localhost:7253/user/all");
+        
+        Console.WriteLine($"Found {_user.Count} Users");
+    }
+
+}
+
